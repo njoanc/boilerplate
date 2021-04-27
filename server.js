@@ -12,16 +12,16 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/api/hello", function (req, res) {
-  res.json({ greeting: "hello API" });
+app.get("/api/hello", function (request, response) {
+  response.json({ greeting: "hello API" });
 });
 
-app.get("/api", function (req, res) {
-  res.json({ unix: Date.now(), utc: Date() });
+app.get("/api", function (request, response) {
+  response.json({ unix: Date.now(), utc: Date() });
 });
 
-app.get("/api/:date", function (req, res) {
-  const user_input = req.params.input;
+app.get("/api/:date", function (request, response) {
+  const user_input = request.params.input;
   if (!isNaN(user_input)) {
     user_input = parseInt(user_input);
   }
@@ -41,7 +41,7 @@ app.get("/api/:date", function (req, res) {
     d1.getUTCMilliseconds
   );
   utc.toUTCString();
-  res.json({ unix: unix, utc: utc });
+  response.json({ unix: unix, utc: utc });
 });
 
 app.listen(port, () => {
