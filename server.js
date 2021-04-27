@@ -8,38 +8,49 @@ app.use(express.static(__dirname + "/public"));
 // Assets at the /public route
 app.use("/public", express.static(__dirname + "/public"));
 
-app.get("/", function (request, response) {
-  response.sendFile(__dirname + "/views/index.html");
+app.get("/", function (request, res) {
+  res.sendFile(__dirname + "/views/index.html");
 });
 
-// app.get("/api/hello", function (request, response) {
-//   response.json({ greeting: "hello API" });
-// });
+app.get("/api/hello", function (request, res) {
+  res.json({ greeting: "hello API" });
+});
 
-// app.get("/api", function (request, response) {
-//   response.json({ unix: Date.now(), utc: Date() });
-// });
+app.get("/api", function (request, res) {
+  let date = new Date();
+  res.redirect(
+    302,
+    "/api/date/" +
+      date.getFullYear() +
+      "-" +
+      (date.getUTCMonth() + 1) +
+      "-" +
+      date.getUTCDate()
+  );
+  // res.json({ unix: Date.now(), utc: Date() });
+});
 
-app.get("/api/:date", function (request, response) {
-  const user_input = request.params.input;
+app.get("/api/date/:input", function (req, res) {
+  // We'll start by setting up a variable...
   let date;
-
-  if (!user_input) {
-    date = new Date();
+  if (/\D/.test(req.params.input)) {
+    date = new Date(req.params.input);
   } else {
-    if (!isNaN(user_input)) {
-      // user_input = parseInt(user_input);
-      date = new Date(parseInt(user_input));
-    } else {
-      date = new Date(user_input);
-    }
+    date = new Date(parseInt(req.params.input));
   }
 
-  if (date.toString() === "Invalid Date") {
-    response.send({ error: date.toString() });
-  } else {
-    response.send({ unix: date.getTime(), utc: date.toUTCString() });
-  }
+  let utc = date.toUTCString();
+  // console.log(utc);
+  let unix = date.getTime();
+  // console.log(unix);
+
+  /*
+ we return a JSON object as a res:
+ */
+  res.json({
+    unix: unix,
+    utc: utc,
+  });
 });
 
 app.listen(port, () => {
