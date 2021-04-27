@@ -15,20 +15,35 @@ app.get("/", function (request, response) {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
+
 app.get("/api", function (req, res) {
   res.json({ unix: Date.now(), utc: Date() });
 });
+
 app.get("/api/:date", function (req, res) {
   const user_input = req.params.input;
   if (!isNaN(user_input)) {
-    user_input = parseInt(user_input) * 1000;
+    user_input = parseInt(user_input);
   }
+  // console.log(user_input);
   //convert user input to Unix timestamp
-  let unix = new Date(user_input).getTime();
+  let unix = Math.round(new Date(user_input).getTime() / 1000);
+  // console.log(unix);
   //Convert user input into UTC timestamp
-  let utc = new Date(user_input).toUTCString();
+  let d1 = new Date(user_input);
+  let utc = new Date(
+    d1.getUTCFullYear(),
+    d1.getUTCMonth,
+    d1.getUTCDay,
+    d1.getUTCHours,
+    d1.getUTCMinutes,
+    d1.getUTCSeconds,
+    d1.getUTCMilliseconds
+  );
+  utc.toUTCString();
   res.json({ unix: unix, utc: utc });
 });
+
 app.listen(port, () => {
   console.log(`This app is listening at http://localhost:${port}`);
 });
