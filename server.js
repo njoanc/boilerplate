@@ -15,6 +15,20 @@ app.get("/", function (request, response) {
 app.get("/api/hello", function (req, res) {
   res.json({ greeting: "hello API" });
 });
+app.get("/api", function (req, res) {
+  res.json({ unix: Date.now(), utc: Date() });
+});
+app.get("/api/:date", function (req, res) {
+  const user_input = req.params.input;
+  if (!isNaN(user_input)) {
+    user_input = parseInt(user_input) * 1000;
+  }
+  //convert user input to Unix timestamp
+  let unix = new Date(user_input).getTime();
+  //Convert user input into UTC timestamp
+  let utc = new Date(user_input).toUTCString();
+  res.json({ unix: unix, utc: utc });
+});
 app.listen(port, () => {
   console.log(`This app is listening at http://localhost:${port}`);
 });
