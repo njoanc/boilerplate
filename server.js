@@ -12,36 +12,34 @@ app.get("/", function (request, response) {
   response.sendFile(__dirname + "/views/index.html");
 });
 
-app.get("/api/hello", function (request, response) {
-  response.json({ greeting: "hello API" });
-});
+// app.get("/api/hello", function (request, response) {
+//   response.json({ greeting: "hello API" });
+// });
 
-app.get("/api", function (request, response) {
-  response.json({ unix: Date.now(), utc: Date() });
-});
+// app.get("/api", function (request, response) {
+//   response.json({ unix: Date.now(), utc: Date() });
+// });
 
 app.get("/api/:date", function (request, response) {
   const user_input = request.params.input;
-  if (!isNaN(user_input)) {
-    user_input = parseInt(user_input);
+  let date;
+
+  if (!user_input) {
+    date = new Date();
+  } else {
+    if (!isNaN(user_input)) {
+      // user_input = parseInt(user_input);
+      date = new Date(parseInt(user_input));
+    } else {
+      date = new Date(user_input);
+    }
   }
-  // console.log(user_input);
-  //convert user input to Unix timestamp
-  let unix = Math.round(new Date(user_input).getTime() / 1000);
-  // console.log(unix);
-  //Convert user input into UTC timestamp
-  let d1 = new Date(user_input);
-  let utc = new Date(
-    d1.getUTCFullYear(),
-    d1.getUTCMonth,
-    d1.getUTCDay,
-    d1.getUTCHours,
-    d1.getUTCMinutes,
-    d1.getUTCSeconds,
-    d1.getUTCMilliseconds
-  );
-  utc.toUTCString();
-  response.json({ unix: unix, utc: utc });
+
+  if (date.toString() === "Invalid Date") {
+    response.send({ error: date.toString() });
+  } else {
+    response.send({ unix: date.getTime(), utc: date.toUTCString() });
+  }
 });
 
 app.listen(port, () => {
